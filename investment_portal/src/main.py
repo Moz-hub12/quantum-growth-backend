@@ -25,8 +25,16 @@ app.register_blueprint(plaid_bp, url_prefix='/api/plaid')
 app.register_blueprint(auth_bp, url_prefix='/api/auth')
 app.register_blueprint(admin_bp)
 
-# uncomment if you need to use database
-app.config['SQLALCHEMY_DATABASE_URI'] = f"sqlite:///{os.path.join(os.path.dirname(__file__), 'database', 'app.db')}"
+# Database configuration for Render (PostgreSQL)
+def get_database_url():
+    """Get database URL from environment variables"""
+    # External PostgreSQL database URL from Render
+    database_url = 'postgresql://qgi_1_user:55MoEmBnCxGPYOM2lCI8ATQIhwZzpiTc@dpg-d294atvdiees73fj795g-a.oregon-postgres.render.com/qgi_1'
+
+    # Return the database URL, or fallback to SQLite for local development
+    return database_url or 'sqlite:///investment_portal.db'
+
+app.config['SQLALCHEMY_DATABASE_URI'] = get_database_url()
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db.init_app(app)
 with app.app_context():
